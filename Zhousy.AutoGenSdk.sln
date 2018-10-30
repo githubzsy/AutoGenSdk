@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zhousy.AutoGenSdk.Main", "Zhousy.AutoGenSdk.Main\Zhousy.AutoGenSdk.Main.csproj", "{165B94FB-7C58-4F26-A569-46A9097E35EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{7B20E970-6276-4DC3-8E92-D162FFA33D09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{165B94FB-7C58-4F26-A569-46A9097E35EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{165B94FB-7C58-4F26-A569-46A9097E35EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{165B94FB-7C58-4F26-A569-46A9097E35EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{165B94FB-7C58-4F26-A569-46A9097E35EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B20E970-6276-4DC3-8E92-D162FFA33D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B20E970-6276-4DC3-8E92-D162FFA33D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B20E970-6276-4DC3-8E92-D162FFA33D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B20E970-6276-4DC3-8E92-D162FFA33D09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {470A6E1A-C5C3-42FC-8938-9A6B2EE68B59}
+	EndGlobalSection
+EndGlobal
