@@ -77,7 +77,7 @@ namespace Zhousy.AutoGenSdk.Main.GenSdkLightBulb
         /// <param name="cancellationToken"></param>
         public void Invoke(CancellationToken cancellationToken)
         {
-            int level = 1;
+            MethodInfo method = new MethodInfo();
 
         }
 
@@ -149,7 +149,7 @@ namespace Zhousy.AutoGenSdk.Main.GenSdkLightBulb
         /// </summary>
         internal string NameSpace { set; get; }
 
-        internal string GenSdk()
+        internal StringBuilder GenSdk()
         {
             StringBuilder docText = new StringBuilder();
             #region 替换头部文本
@@ -158,47 +158,16 @@ namespace Zhousy.AutoGenSdk.Main.GenSdkLightBulb
                 string temp = File.ReadAllText("\\SdkHead.md").Replace("【DocName】", MethodName).Replace("【DocDescription】", Description);
 
                 StringBuilder methodListText = new StringBuilder();
-                // |[1 HtfkApplyDomainService.CheckBeforeApprovalRejected](#HtfkApplyDomainService_CheckBeforeApprovalRejected)|审批驳回前校验
-                methodListText.AppendLine(string.Format("|[{0} {1}.{2}](#{1}_{2})|{3}",Index, ClassName, MethodName, Description));
-                SetMethodListText(methodListText, Children);
+                SetMethodListText(methodListText, this);
                 docText.Append(methodListText);
             }
             #endregion
 
-            #region 替换主体文本
-            {
-                #region 设定层级字符
-                string levelSharp = string.Empty;
-                for (int i = 0; i < Level; i++)
-                {
-                    levelSharp += "#";
-                }
-                levelSharp += "##"; //初始就是3级
-                if (levelSharp.Count() > 4) levelSharp = "####";    //大于4级的就以4级展示(大于4级会字太小看不清)
-                #endregion
+            StringBuilder bodyText = new StringBuilder();
+            GetBodyText(bodyText, this);
+            docText.Append(bodyText);
 
-                #region 设定方法详细描述文本
-                StringBuilder detailsText = new StringBuilder();
-                foreach (var item in Details)
-                {
-                    detailsText.AppendLine("- " + item);
-                }
-                #endregion
-
-                #region 设定参数相关
-                StringBuilder parametersInTable = new StringBuilder();
-                StringBuilder parametersInLine = new StringBuilder();
-                foreach (var parameter in Parameters)
-                {
-                    // entity | HtfkApply | 合同付款申请 
-                    parametersInTable.AppendLine(string.Format("{0} | {1} | {2}", parameter.Name, parameter.TypeName, parameter.Description));
-                    parametersInLine.Append(parameter.TypeName + " " + parameter.Name + ",");
-                }
-                #endregion
-
-                string temp = File.ReadAllText("\\SdkBody.md").Replace("【LevelSharp】", levelSharp).Replace("【Index】", Index).Replace("【ClassName】", ClassName).Replace("【MethodName】", MethodName).Replace("【Description】", Description).Replace("【Details】", detailsText.ToString()).Replace("【ParametersInTable】", parametersInTable.ToString()).Replace("【ReturnValue】", ReturnValue).Replace("【MngName】", MngName).Replace("【NameSpace】", NameSpace).Replace("【ParametersInLine】", parametersInLine.ToString().TrimEnd(','));
-            }
-            #endregion
+            return docText;
         }
 
         /// <summary>
@@ -212,19 +181,84 @@ namespace Zhousy.AutoGenSdk.Main.GenSdkLightBulb
         /// 递归获取扩展接口清单
         /// </summary>
         /// <param name="methodListText">文本</param>
-        /// <param name="children">子方法</param>
-        static void SetMethodListText(StringBuilder methodListText,List<MethodInfo> children)
+        /// <param name="method">方法</param>
+        static void SetMethodListText(StringBuilder methodListText,MethodInfo method)
         {
-            foreach (var method in children)
+            string tab = string.Empty;
+            for (int i = 1; i < method.Level; i++)
             {
-                string tab = string.Empty;
-                for (int i = 1; i < method.Level; i++)
-                {
-                    tab += mdTab;
-                }
-                methodListText.AppendLine(string.Format("|[{0}{1} {2}.{3}](#{2}_{3})|{4}", tab, method.Index, method.ClassName, method.MethodName, method.Description));
-                SetMethodListText(methodListText, method.Children);
+                tab += mdTab;
             }
+            methodListText.AppendLine(string.Format("|[{0}{1} {2}.{3}](#{2}_{3})|{4}", tab, method.Index, method.ClassName, method.MethodName, method.Description));
+
+            if (method.Children.Count > 0)
+            {
+                foreach (var child in method.Children)
+                {
+                    SetMethodListText(methodListText, child);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 递归获取所有方法的md文本
+        /// </summary>
+        /// <param name="bodyText"></param>
+        /// <param name="method"></param>
+        static void GetBodyText(StringBuilder bodyText,MethodInfo method)
+        {
+            #region 获取当前方法的markdown主体信息
+            #region 设定层级字符
+            string levelSharp = string.Empty;
+            for (int i = 0; i < method.Level; i++)
+            {
+                levelSharp += "#";
+            }
+            levelSharp += "##"; //初始就是3级
+            if (levelSharp.Count() > 4) levelSharp = "####";    //大于4级的就以4级展示(大于4级会字太小看不清)
+            #endregion
+
+            #region 设定方法详细描述文本
+            StringBuilder detailsText = new StringBuilder();
+            foreach (var item in method.Details)
+            {
+                detailsText.AppendLine("- " + item);
+            }
+            #endregion
+
+            #region 设定参数相关
+            StringBuilder parametersInTable = new StringBuilder();
+            StringBuilder parametersInLine = new StringBuilder();
+            foreach (var parameter in method.Parameters)
+            {
+                // entity | HtfkApply | 合同付款申请 
+                parametersInTable.AppendLine(string.Format("{0} | {1} | {2}", parameter.Name, parameter.TypeName, parameter.Description));
+                parametersInLine.Append(parameter.TypeName + " " + parameter.Name + ",");
+            }
+            #endregion
+
+            #region 设定返回值相关
+            string returnValue = string.Empty;
+            if (method.ReturnValue != null)
+            {
+                returnValue = method.ReturnValue.TypeName + " | " + method.ReturnValue.Description;
+            }
+            #endregion
+
+            string temp = File.ReadAllText("\\SdkBody.md").Replace("【LevelSharp】", levelSharp).Replace("【Index】", method.Index).Replace("【ClassName】", method.ClassName).Replace("【MethodName】", method.MethodName).Replace("【Description】", method.Description).Replace("【Details】", detailsText.ToString()).Replace("【ParametersInTable】", parametersInTable.ToString()).Replace("【ReturnValue】", returnValue).Replace("【MngName】", method.MngName).Replace("【NameSpace】", method.NameSpace).Replace("【ParametersInLine】", parametersInLine.ToString().TrimEnd(','));
+            bodyText.Append(temp);
+            #endregion
+
+
+            #region 有子级时要去递归获取子级方法的markdown文本
+            if (method.Children.Count > 0)
+            {
+                foreach (var child in method.Children)
+                {
+                    GetBodyText(bodyText, child);
+                }
+            }
+            #endregion
         }
     }
 
