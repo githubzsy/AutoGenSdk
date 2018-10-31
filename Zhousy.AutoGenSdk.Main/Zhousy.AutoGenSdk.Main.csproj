@@ -58,9 +58,6 @@
     <Compile Include="Command\Command1Package.cs" />
     <Compile Include="Command\OpenNotepad.cs" />
     <Compile Include="Command\TestCommand.cs" />
-    <Compile Include="GenSdkLightBulb\GenSdkSuggestedAction.cs" />
-    <Compile Include="GenSdkLightBulb\GenSdkSuggestedActionsSource.cs" />
-    <Compile Include="GenSdkLightBulb\GenSdkSuggestedActionsSourceProvider.cs" />
     <Compile Include="LightBulbTest\TestSuggestedActionsSource.cs" />
     <Compile Include="LightBulbTest\TestSuggestedActionsSourceProvider.cs" />
     <Compile Include="LightBulbTest\LowerCaseSuggestedAction.cs" />
@@ -74,9 +71,6 @@
     <Compile Include="ViewportAdornment\ViewportAdornment1TextViewCreationListener.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GenSdkLightBulb\SdkBody.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
@@ -92,9 +86,6 @@
     <Content Include="Command\Resources\Command1Package.ico" />
     <Content Include="Command\Resources\OpenNotepad.png" />
     <Content Include="Command\Resources\TestCommand.png" />
-    <None Include="GenSdkLightBulb\SdkHead.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Include="index.html" />
     <Content Include="stylesheet.css" />
   </ItemGroup>
