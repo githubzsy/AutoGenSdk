@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zhousy.AutoGenSdk.Model;
 
-namespace Zhousy.AutoGenSdk.LightBulb.GenSdkLightBulb
+namespace Zhousy.AutoGenSdk.Logic.Sdk
 {
     /// <summary>
     /// 封装生成sdk文件的操作
