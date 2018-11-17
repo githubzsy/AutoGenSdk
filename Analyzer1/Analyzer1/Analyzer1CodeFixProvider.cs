@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.FindSymbols;
+using Zhousy.AutoGenSdk.Model;
 
 namespace Analyzer1
 {
@@ -40,8 +42,7 @@ namespace Analyzer1
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
-
+            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -51,7 +52,7 @@ namespace Analyzer1
                 diagnostic);
         }
 
-        private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
+        private async Task<Solution> MakeUppercaseAsync(Document document, MethodDeclarationSyntax typeDecl, CancellationToken cancellationToken)
         {
             // Compute new uppercase name.
             var identifierToken = typeDecl.Identifier;
@@ -60,6 +61,29 @@ namespace Analyzer1
             // Get the symbol representing the type to be renamed.
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
             var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
+            foreach (var item in typeDecl.Body.ChildNodes())
+            {
+                if (item.IsKind(SyntaxKind.IfStatement))
+                {
+                    var temp = (IfStatementSyntax)item;
+                    if (temp.Statement.IsKind(SyntaxKind.Block))
+                    {
+                        var statements = ((BlockSyntax)temp.Statement).Statements;
+                        foreach (var statement in statements)
+                        {
+                            var expression = ((ExpressionStatementSyntax)statement).Expression;
+                            if (expression.IsKind(SyntaxKind.InvocationExpression))
+                            {
+                                ((InvocationExpressionSyntax)expression).
+                            }
+                        }
+                    }
+                }
+                else if (item.IsKind(SyntaxKind.MethodKeyword))
+                {
+                    //添加到子方法中
+                }
+            }
 
             // Produce a new solution that has all references to that type renamed, including the declaration.
             var originalSolution = document.Project.Solution;
@@ -69,5 +93,30 @@ namespace Analyzer1
             // Return the new solution with the now-uppercase type name.
             return newSolution;
         }
+
+        //private async Task<Solution> GenSdkAsync(Document document, MethodDeclarationSyntax method, CancellationToken cancellationToken)
+        //{
+        //    List<MethodInfo> methodInfos = new List<MethodInfo>();
+        //    methodInfos.Add(new MethodInfo()
+        //    {
+        //        ClassName=method.Parent.GetText().ToString(),
+        //        Description
+        //    })
+        //    // 获取方法标识
+        //    if (method?.Body != null)
+        //    {
+        //        foreach (var item in method.Body.ChildNodes)
+        //        {
+                    
+        //        }  
+        //    }
+        //}
+
+        //private MethodInfo GetMethod(MethodDeclarationSyntax method)
+        //{
+        //    MethodInfo info = new MethodInfo();
+        //    info.ClassName = method.Parent.GetText().ToString();
+        //    info.
+        //}
     }
 }
